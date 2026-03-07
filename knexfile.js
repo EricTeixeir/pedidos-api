@@ -1,8 +1,10 @@
-require('dotenv').config()
+import dotenv from "dotenv"
 
-module.exports = {
+dotenv.config()
+
+const config = {
   development: {
-    client: 'pg',
+    client: "pg",
     connection: {
       host: process.env.DB_HOST,
       port: process.env.DB_PORT,
@@ -11,10 +13,12 @@ module.exports = {
       database: process.env.DB_NAME
     },
     migrations: {
-      directory: './src/database/migrations'
+      directory: "./src/database/migrations"
     },
     seeds: {
-      directory: './src/database/seeds'
+      directory: "./src/database/seeds"
     }
   }
 }
+
+export default config
