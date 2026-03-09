@@ -1,8 +1,25 @@
-const swaggerUi = require('swagger-ui-express')
-const YAML = require('yamljs')
+import swaggerJsdoc from "swagger-jsdoc";
 
-const swaggerDocument = YAML.load('./src/docs/swagger.yaml')
+const options = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "Order API",
+            version: "1.0.0",
+            description: "API para gerenciamento de pedidos.",
+        },
+        servers: [{ url: "http://localhost:3000" }],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT",
+                },
+            },
+        },
+    },
+    apis: ["./src/modules/**/routes/*.js"],
+};
 
-module.exports = (app) => {
-    app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-}
+export const swaggerSpec = swaggerJsdoc(options);
