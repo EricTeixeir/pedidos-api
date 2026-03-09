@@ -17,43 +17,6 @@ REST API para gerenciamento de pedidos com autenticação JWT. Construída com N
 
 ---
 
-## Estrutura do Projeto
-
-```
-src/
-├── app/
-│   └── app.js                  # Configuração do Express
-├── config/
-│   └── swaggert.js             # Configuração do Swagger UI
-├── database/
-│   ├── connection.js           # Instância do Knex
-│   ├── createDatabase.js       # Script de criação do banco
-│   ├── migrations/             # Tabelas: users, orders, order_items
-│   └── seeds/
-│       └── 01_admin_user.js    # Dados fictícios para testes
-├── docs/
-│   └── swagger.yaml            # Documentação OpenAPI
-├── middlewares/
-│   └── authenticate.js         # Middleware JWT
-├── modules/
-│   ├── auth/
-│   │   ├── controllers/
-│   │   ├── repositories/
-│   │   ├── routes/
-│   │   └── services/
-│   └── order/
-│       ├── controllers/
-│       ├── mappers/
-│       ├── repositories/
-│       ├── routes/
-│       └── services/
-├── routes/
-│   └── index.js                # Roteador raiz
-└── server.js                   # Ponto de entrada
-```
-
----
-
 ## Pré-requisitos
 
 - Node.js >= 18
@@ -95,8 +58,6 @@ pnpm install
 |------------------|-----------|
 | `pnpm start:dev` | Setup completo + servidor (use na **primeira execução**) |
 | `pnpm dev`       | Inicia apenas o servidor com hot-reload |
-| `pnpm migrate`   | Executa as migrations pendentes |
-| `pnpm seed`      | Popula o banco com dados fictícios |
 
 ---
 
@@ -277,7 +238,7 @@ Após o `start:dev`, os seguintes dados estarão disponíveis para teste imediat
 Com o servidor rodando, acesse a documentação interativa em:
 
 ```
-http://localhost:3000/docs
+http://localhost:3000/api-docs
 ```
 
 ---
@@ -327,33 +288,8 @@ order_items
 
 ---
 
-## Melhorias Futuras
+## Futuras features 
 
 ### Centralização de Tratamento de Erros
 
 Atualmente, o tratamento de erros é feito individualmente em cada controller via `try/catch`. Uma melhoria planejada é criar um middleware centralizado em `src/middlewares/errorHandler.js`.
-
-**Benefícios:**
-- Elimina o bloco `try/catch` repetido em todos os controllers
-- Padroniza o formato de resposta de erro em toda a API
-- Facilita a adição de logs estruturados e monitoramento
-- Simplifica a manutenção e os testes
-
-**Implementação prevista:**
-
-```js
-// src/middlewares/errorHandler.js
-export const errorHandler = (err, req, res, next) => {
-  const status = err.statusCode || 500;
-  const message = err.message || "Erro interno do servidor.";
-  res.status(status).json({ message });
-};
-```
-
-```js
-// src/app/app.js — registrar após as rotas
-import { errorHandler } from "../middlewares/errorHandler.js";
-app.use(errorHandler);
-```
-
-Com isso, os controllers apenas propagariam o erro via `next(error)`, e toda a lógica de resposta ficaria centralizada no middleware.
