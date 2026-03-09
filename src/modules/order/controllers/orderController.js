@@ -1,15 +1,12 @@
 import { orderService } from "../services/orderService.js";
 
 export const orderController = {
-    create: async (req, res, next) => {
+    create: async (req, res) => {
         try {
             const order = await orderService.create(req.body, req.user.id);
             res.status(201).json(order);
         } catch (error) {
-            if (error.statusCode === 409) {
-                return res.status(409).json({ message: error.message });
-            }
-            next(error);
+            res.status(error.statusCode || 500).json({ message: error.message });
         }
     },
     findByOrderId: async (req, res) => {
