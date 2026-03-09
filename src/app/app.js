@@ -1,9 +1,12 @@
-const express = require('express')
-const setupSwagger = require('../config/swagger')
-const app = express()
+import express from "express";
+import cors from "cors";
+import router from "../routes/index.js";
 
-app.use(express.json())
+const app = express();
 
-setupSwagger(app)
+app.use(cors());
+app.use(express.json());
 
-module.exports = app
+app.use(router);
+
+export default app;

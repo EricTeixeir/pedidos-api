@@ -8,6 +8,7 @@ export function up(knex) {
         table.string('name').notNullable();
         table.string('email').notNullable().unique();
         table.string('password').notNullable();
+        table.timestamp('deleted_at').nullable();
 
         table.timestamps(true, true);
     })
