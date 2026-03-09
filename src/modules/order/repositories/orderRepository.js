@@ -41,4 +41,48 @@ export const orderRepository = {
 
         return { order, items };
     },
+
+    findAll: async (userId) => {
+        const orders = await db("orders")
+            .where({ user_id: userId })
+            .whereNull("deleted_at")
+            .orderBy("created_at", "desc");
+
+        return Promise.all(
+            orders.map(async (order) => {
+                const items = await db("order_items").where({ order_id: order.id });
+                return { order, items };
+            })
+        );
+    },
+
+    update: async (orderId, { value, creationDate, items }) => {
+        return db.transaction(async (trx) => {
+            const [order] = await trx("orders")
+                .where({ order_id: orderId })
+                .update({ total: value, creation_date: creationDate })
+                .returning("*");
+
+            if (!order) return null;
+
+            await trx("order_items").where({ order_id: order.id }).del();
+
+            const orderItems = items.map((item) => ({
+                order_id: order.id,
+                product_id: item.productId,
+                quantity: item.quantity,
+                price: item.price,
+            }));
+
+            const updatedItems = await trx("order_items").insert(orderItems).returning("*");
+            return { order, items: updatedItems };
+        });
+    },
+
+    delete: async (orderId) => {
+        const deleted = await db("orders")
+            .where({ order_id: orderId })
+            .update({ deleted_at: new Date() });
+        return deleted > 0;
+    },
 };
