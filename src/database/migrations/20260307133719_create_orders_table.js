@@ -13,10 +13,11 @@ export function up(knex) {
             .inTable('users')
             .onDelete('CASCADE')
 
+        table.string('order_id').unique()
         table.decimal('total', 10, 2)
-
+        table.timestamp('creation_date')
         table.string('status')
-
+        table.timestamp('deleted_at').nullable()
         table.timestamps(true, true)
     })
 };

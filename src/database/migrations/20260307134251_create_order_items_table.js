@@ -13,7 +13,7 @@ export function up(knex) {
             .inTable('orders')
             .onDelete('CASCADE')
 
-        table.string('product')
+        table.integer('product_id')
 
         table.integer('quantity')
 
